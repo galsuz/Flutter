@@ -2,9 +2,10 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'chat_message.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'message_store.dart';
 
-class DetailView extends StatefulWidget {
+class DetailView extends StatefulObserverWidget {
   const DetailView({Key? key, required this.title}) : super(key: key);
   final String title;
 
@@ -13,19 +14,16 @@ class DetailView extends StatefulWidget {
 }
 
 class _DetailViewState extends State<DetailView> {
-  List<ChatMessage> _messages = [
-    ChatMessage(messageContent: "Hello!", messageType: "receiver"),
-    ChatMessage(messageContent: "Hello?", messageType: "sender"),
-  ];
 
+  MessageStore _messageStore = MessageStore();
   TextEditingController _textEditingController = TextEditingController();
+
   double defaultPadding = 20;
 
-  void _addToList(ChatMessage message) {
-    setState(() {
-      _messages.add(message);
-    });
-    _textEditingController.clear();
+  @override
+  void initState() {
+    super.initState();
+    _messageStore.getMessage();
   }
 
   @override
@@ -62,7 +60,7 @@ class _DetailViewState extends State<DetailView> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: _messages.length,
+                itemCount: _messageStore.messages.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.only(top: 10, bottom: 10),
                 itemBuilder: (context, index) {
@@ -70,21 +68,29 @@ class _DetailViewState extends State<DetailView> {
                     padding: EdgeInsets.only(
                         left: 14, right: 14, top: 10, bottom: 10),
                     child: Align(
-                      alignment: (_messages[index].messageType == "receiver"
-                          ? Alignment.topLeft
-                          : Alignment.topRight),
+                      alignment: (
+                          _messageStore.messages[index].author == "Kitty"
+                              ? Alignment.topRight
+                              : Alignment.topLeft
+                          ),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
-                          color: (_messages[index].messageType == "receiver"
-                              ? Colors.grey.shade200
-                              : Colors.pink[200]),
+                          color: (
+                               Colors.grey.shade200
+                              ),
                         ),
                         padding: EdgeInsets.all(16),
-                        child: Text(
-                          _messages[index].messageContent,
-                          style: TextStyle(fontSize: 15),
-                        ),
+                        child: Column(children: <Widget>[
+                          Text(
+                            _messageStore.messages[index].message,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          Text(
+                            _messageStore.messages[index].author,
+                            style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                          ),
+                        ]),
                       ),
                     ),
                   );
@@ -134,10 +140,14 @@ class _DetailViewState extends State<DetailView> {
                                 color: Colors.grey[700],
                               ),
                               onTap: () {
-                                ChatMessage message = ChatMessage(
-                                    messageContent: _textEditingController.text,
-                                    messageType: "sender");
-                                _addToList(message);
+                                _messageStore.sendMessage(_textEditingController.text);
+                                _textEditingController.clear();
+
+                                _messageStore.getMessage();
+                                // setState(() {
+                                //   _getMessage();
+                                // });
+                                //initState();
                               },
                             ),
                           ],
