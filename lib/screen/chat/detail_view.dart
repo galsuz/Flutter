@@ -3,7 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'message_store.dart';
+import '../../message_store.dart';
 
 class DetailView extends StatefulObserverWidget {
   const DetailView({Key? key, required this.title}) : super(key: key);
@@ -142,12 +142,7 @@ class _DetailViewState extends State<DetailView> {
                               onTap: () {
                                 _messageStore.sendMessage(_textEditingController.text);
                                 _textEditingController.clear();
-
                                 _messageStore.getMessage();
-                                // setState(() {
-                                //   _getMessage();
-                                // });
-                                //initState();
                               },
                             ),
                           ],

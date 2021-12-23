@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_final_fields
 
 import 'package:flutter/material.dart';
-import 'package:homework_app/detail_view.dart';
+import 'package:homework_app/screen/chat/detail_view.dart';
+
+import 'gallery/gallery_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,8 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(color: Colors.black, fontSize: 18),
                         ),
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => DetailView(title: item)));
+                          if (item == "Task 3") {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => GalleryView()));
+                          } else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => DetailView(title: item)));
+                          }
                         },
                       );
                     }).toList(),

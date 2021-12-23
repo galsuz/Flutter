@@ -1,3 +1,4 @@
+
 class ChatMessage {
   String messageContent;
   String messageType;
